@@ -15,8 +15,7 @@
 # #---- Set OpenAI API key 
 # # Change environment variable name from "OPENAI_API_KEY" to the name given in 
 # # your .env file.
-# openai.api_key = "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"
-
+# openai.api_key = ""
 # CHROMA_PATH = "chroma"
 # DATA_PATH = "documents"
 
