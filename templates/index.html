@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nancy's Chatbox</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        #chatbox { height: 400px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
+        #user-input { width: 80%; padding: 5px; }
+        #send-button { padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>Nancy's Chatbox</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="user-input" placeholder="Ask a question...">
+    <button id="send-button">Send</button>
+
+    <script>
+        $(document).ready(function() {
+            $.get('/db_info', function(data) {
+                $('#chatbox').append('<p><strong>Database Info:</strong> ' + data.document_count + ' documents</p>');
+            });
+
+            function sendMessage() {
+                var userInput = $('#user-input').val();
+                if (userInput.trim() === '') return;
+
+                $('#chatbox').append('<p><strong>You:</strong> ' + userInput + '</p>');
+                $('#user-input').val('');
+
+                $.ajax({
+                    url: '/ask',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ question: userInput }),
+                    success: function(response) {
+                        $('#chatbox').append('<p><strong>AI:</strong> ' + response.answer + '</p>');
+                        $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+                    }
+                });
+            }
+
+            $('#send-button').click(sendMessage);
+            $('#user-input').keypress(function(e) {
+                if (e.which == 13) sendMessage();
+            });
+        });
+    </script>
+</body>
+</html>
