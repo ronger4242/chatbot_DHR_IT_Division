@@ -109,6 +109,20 @@ try:
 except Exception as e:
     raise Exception(f"Failed to initialize LLM model: {str(e)}")
 
+def normalize_scores(results):
+    # Extract scores from results
+    scores = [score for _, score in results]
+    
+    # Find min and max scores
+    min_score = min(scores)
+    max_score = max(scores)
+    
+    # Apply min-max normalization: (x - min) / (max - min)
+    normalized = [(doc, (score - min_score) / (max_score - min_score)) 
+                 for doc, score in results]
+    
+    return normalized
+
 def query_data(query_text):
     # Handle greetings
     if re.search(r'\b(hello|hi|hey)\b', query_text.lower()):
@@ -126,6 +140,9 @@ def query_data(query_text):
         # Use both original and normalized queries for better matching
         results1 = db.similarity_search_with_relevance_scores(query_text, k=3)
         results2 = db.similarity_search_with_relevance_scores(normalized_query, k=1)
+
+        # results1 = normalize_scores(results1)
+        # results2 = normalize_scores(results2)
         
         # Combine and deduplicate results
         all_results = list({(r[0].page_content, r[1]) for r in results1 + results2})

@@ -30,4 +30,4 @@ def db_info():
     return jsonify({'document_count': count})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
