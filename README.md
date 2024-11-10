@@ -12,6 +12,7 @@ step 2: Then run the app.py file to start the chatbot: *python app.py* in the br
 
 step 3: A chat window will pop up like the following screenshot.
 
-![image](https://github.com/user-attachments/assets/91bf33fb-f54a-4775-a369-16f4f1af041f)
+![image](https://github.com/user-attachments/assets/5e82dfac-198e-414e-9642-9b57daf62766)
+
 
 
