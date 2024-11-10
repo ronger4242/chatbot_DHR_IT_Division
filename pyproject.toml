@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "langchain-rag-project"
+version = "0.1.0"
+description = "A project using LangChain, RAG, and Llama model for document querying"
+authors = ["Nancy Zhao <szhao@hr.lacounty.gov>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+python-dotenv = "1.0.1"
+langchain = "<=0.3.4"
+langchain-community = "<=0.3.3"
+langchain-openai = "<=0.2.3"
+chromadb = "^0.4.0"
+requests = "^2.27.1"
+openai = "1.52.2"
+tiktoken = "0.8.0"
+llama-cpp-python = "^0.1.48"
+faiss-cpu = "^1.7.4"
+sentence-transformers = "^2.2.2"
+torch = "^2.4.1"
+pandas = "^1.5.3"
+ipykernel = "^6.29.5"
+flask = "^3.0.2"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

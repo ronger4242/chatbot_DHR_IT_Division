@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHR IT Division Chat</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --background-color: #f8fafc;
+            --chat-bubble-user: #e2e8f0;
+            --chat-bubble-ai: #dbeafe;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: #1a1a1a;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        #chatbox {
+            height: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            overflow-y: scroll;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .user-message .message-content {
+            background: var(--chat-bubble-user);
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message {
+            justify-content: flex-start;
+        }
+
+        .ai-message .message-content {
+            background: var(--chat-bubble-ai);
+            border-bottom-left-radius: 4px;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        #user-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        #send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #send-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Custom scrollbar */
+        #chatbox::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #chatbox::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #chatbox::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        #chatbox::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+
+        /* Loading animation */
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 8px 12px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #6b7280;
+            border-radius: 50%;
+            animation: typing 1s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0.1s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to DHR IT Division</h1>
+        <p>How can I assist you today?</p>
+    </div>
+    <div id="chatbox"></div>
+    <div class="input-container">
+        <input type="text" id="user-input" placeholder="Type your message here...">
+        <button id="send-button">
+            <i class="fas fa-paper-plane"></i>
+            Send
+        </button>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function addMessage(message, isUser) {
+                const messageDiv = $('<div>').addClass('message ' + (isUser ? 'user-message' : 'ai-message'));
+                const messageContent = $('<div>').addClass('message-content').text(message);
+                messageDiv.append(messageContent);
+                $('#chatbox').append(messageDiv);
+                $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+            }
+
+            function addTypingIndicator() {
+                const indicator = $('<div>').addClass('message ai-message');
+                const content = $('<div>').addClass('message-content typing-indicator');
+                for (let i = 0; i < 3; i++) {
+                    content.append($('<div>').addClass('typing-dot'));
+                }
+                indicator.append(content);
+                $('#chatbox').append(indicator);
+                $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+                return indicator;
+            }
+
+            function sendMessage() {
+                const userInput = $('#user-input').val().trim();
+                if (userInput === '') return;
+
+                addMessage(userInput, true);
+                $('#user-input').val('').focus();
+
+                const typingIndicator = addTypingIndicator();
+
+                $.ajax({
+                    url: '/ask',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ question: userInput }),
+                    success: function(response) {
+                        typingIndicator.remove();
+                        addMessage(response.answer, false);
+                    },
+                    error: function() {
+                        typingIndicator.remove();
+                        addMessage("Sorry, I'm having trouble connecting. Please try again.", false);
+                    }
+                });
+            }
+
+            $('#send-button').click(sendMessage);
+            $('#user-input').keypress(function(e) {
+                if (e.which == 13) sendMessage();
+            });
+        });
+    </script>
+</body>
+</html>
